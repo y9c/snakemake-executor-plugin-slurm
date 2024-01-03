@@ -78,7 +78,12 @@ class Executor(RemoteExecutor):
         # generic part of a submission string:
         # we use a run_uuid as the job-name, to allow `--name`-based
         # filtering in the job status checks (`sacct --name` and `squeue --name`)
-        call = f"sbatch --job-name {self.run_uuid} -o {slurm_logfile} --export=ALL"
+        # call = f"sbatch --job-name {self.run_uuid} -o {slurm_logfile} --export=ALL"
+        spec = job.get_target_spec()[0]                                                                                                                                                                               <<<[NORMAL]
+        wildcards = ",".join(
+            f"{key}={value}" for key, value in spec.wildcards_dict.items()
+        )
+        call = f"sbatch --job-name {spec.rulename}:{wildcards} -o {slurm_logfile} --export=ALL"
 
         call += self.get_account_arg(job)
         call += self.get_partition_arg(job)
@@ -209,7 +214,7 @@ class Executor(RemoteExecutor):
                 (status_of_jobs, sacct_query_duration) = await self.job_stati(
                     # -X: only show main job, no substeps
                     f"sacct -X --parsable2 --noheader --format=JobIdRaw,State "
-                    f"--name {self.run_uuid}"
+                    # f"--name {self.run_uuid}"
                 )
                 if status_of_jobs is None and sacct_query_duration is None:
                     self.logger.debug(f"could not check status of job {self.run_uuid}")
