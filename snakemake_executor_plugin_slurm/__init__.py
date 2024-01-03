@@ -79,7 +79,7 @@ class Executor(RemoteExecutor):
         # we use a run_uuid as the job-name, to allow `--name`-based
         # filtering in the job status checks (`sacct --name` and `squeue --name`)
         # call = f"sbatch --job-name {self.run_uuid} -o {slurm_logfile} --export=ALL"
-        spec = job.get_target_spec()[0]                                                                                                                                                                               <<<[NORMAL]
+        spec = job.get_target_spec()[0]
         wildcards = ",".join(
             f"{key}={value}" for key, value in spec.wildcards_dict.items()
         )
